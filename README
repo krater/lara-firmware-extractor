@@ -1,0 +1,11 @@
+Extractor for LARA Firmware Files
+
+Autor: Andreas Schuler (andreas at schulerdev dot de)
+
+Compile: g++ main.cpp -o lara
+
+Usage: lara -i firmware.bin       # to get information
+       lara -e firmware.bin       # to extract files
+
+License: GNU GPL v2
+

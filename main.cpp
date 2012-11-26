@@ -180,7 +180,7 @@ void mode_info(char *fw)
     while(read_parthead(f,&ph))
     {
         int dofs=ftell(f);
-        printf("Data offset: %.8x (%u)\n",dofs,dofs);
+        printf("Data offset:           %.8x (%u)\n",dofs,dofs);
         print_parthead(&ph);
 
         if(ph.nextpart)
@@ -190,9 +190,6 @@ void mode_info(char *fw)
     }
 
     fclose(f);
-
-
-
 }
 
 void mode_extract(char *fw)
@@ -205,21 +202,9 @@ void mode_extract(char *fw)
         exit(1);
     }
 
-    char md5[16];
-    if(fread(md5,1,16,f)!=16)
-    {
-        printf("Can't read md5 sum\n");
-        return;
-    }
-
-
-    printf("md5sum:");
-    for(int i=0;i<16;i++)
-        printf("%0.2x",((unsigned char)(md5[i])));
-    printf("\n");
+    fseek(f,16,SEEK_SET);
 
     struct filehead fh;
-
     if(!read_filehead(f,&fh))
     {
         printf("cant read fileheader");
@@ -229,13 +214,10 @@ void mode_extract(char *fw)
     print_filehead(&fh);
 
     struct parthead ph;
-
     size_t lastpos=0x180;
 
     while(read_parthead(f,&ph))
     {
-        print_parthead(&ph);
-
         if(ph.nextpart)
         {
             write_file(f,&fh,ph.nextpart-lastpos-sizeof(parthead));
@@ -244,7 +226,6 @@ void mode_extract(char *fw)
         else
             break;
 
-        printf("lastpos:%x, length:%x\n",ph.nextpart,ph.nextpart-lastpos);
         lastpos=ph.nextpart;
 
     }
